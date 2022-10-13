@@ -410,10 +410,10 @@ func (e *Engine) Signers(header *types.Header) ([]common.Address, error) {
 			if bytes.Compare(seal, zeroSeal) == 0 {
 				// Old quorum consensus could produce zero committed seals. https://github.com/ConsenSys/quorum/pull/1118
 				log.Warn("Zero committed seal encountered", "block", header.Number)
-			} else {
-				log.Error("IBFT Signers stanbulcommon.GetSignatureAddress(proposalSeal, seal)", "err", err, "header", fmt.Sprintf("{Header: %v}", header), "extra", hexutil.Encode(header.Extra))
-				return nil, istanbulcommon.ErrInvalidSignature
+				continue
 			}
+			log.Error("IBFT Signers stanbulcommon.GetSignatureAddress(proposalSeal, seal)", "err", err, "header", fmt.Sprintf("{Header: %v}", header), "extra", hexutil.Encode(header.Extra))
+			return nil, istanbulcommon.ErrInvalidSignature
 		}
 		addrs = append(addrs, addr)
 	}
