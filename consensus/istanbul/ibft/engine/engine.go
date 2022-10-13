@@ -2,6 +2,7 @@ package ibftengine
 
 import (
 	"bytes"
+	"fmt"
 	"math/big"
 	"time"
 
@@ -405,7 +406,7 @@ func (e *Engine) Signers(header *types.Header) ([]common.Address, error) {
 		// 2. Get the original address by seal and parent block hash
 		addr, err := istanbulcommon.GetSignatureAddress(proposalSeal, seal)
 		if err != nil {
-			log.Error("IBFT Signers stanbulcommon.GetSignatureAddress(proposalSeal, seal)", "err", err)
+			log.Error("IBFT Signers stanbulcommon.GetSignatureAddress(proposalSeal, seal)", "err", err, "header", fmt.Sprintf("{Header: %v}", header))
 			return nil, istanbulcommon.ErrInvalidSignature
 		}
 		addrs = append(addrs, addr)
