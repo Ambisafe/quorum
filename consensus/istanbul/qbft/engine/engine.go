@@ -12,6 +12,7 @@ import (
 	"github.com/ethereum/go-ethereum/consensus/istanbul/validator"
 	"github.com/ethereum/go-ethereum/core/state"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/ethereum/go-ethereum/trie"
 	"golang.org/x/crypto/sha3"
@@ -408,6 +409,7 @@ func (e *Engine) Signers(header *types.Header) ([]common.Address, error) {
 		// 2. Get the original address by seal and parent block hash
 		addr, err := istanbul.GetSignatureAddressNoHashing(proposalSeal, seal)
 		if err != nil {
+			log.Error("QBFT Signers istanbul.GetSignatureAddressNoHashing(proposalSeal, seal)", "err", err)
 			return nil, istanbulcommon.ErrInvalidSignature
 		}
 		addrs = append(addrs, addr)

@@ -16,6 +16,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/ethereum/go-ethereum/trie"
+	"github.com/ethereum/go-ethereum/log"
 	"golang.org/x/crypto/sha3"
 )
 
@@ -354,6 +355,7 @@ func (e *Engine) updateBlock(parent *types.Header, block *types.Block) (*types.B
 // suggest to rename to writeSeal.
 func writeSeal(h *types.Header, seal []byte) error {
 	if len(seal)%types.IstanbulExtraSeal != 0 {
+		log.Error("IBFT writeSeal len(seal)%types.IstanbulExtraSeal != 0", "len(seal)", len(seal), "types.IstanbulExtraSeal", types.IstanbulExtraSeal)
 		return istanbulcommon.ErrInvalidSignature
 	}
 
@@ -403,6 +405,7 @@ func (e *Engine) Signers(header *types.Header) ([]common.Address, error) {
 		// 2. Get the original address by seal and parent block hash
 		addr, err := istanbulcommon.GetSignatureAddress(proposalSeal, seal)
 		if err != nil {
+			log.Error("IBFT Signers stanbulcommon.GetSignatureAddress(proposalSeal, seal)", "err", err)
 			return nil, istanbulcommon.ErrInvalidSignature
 		}
 		addrs = append(addrs, addr)

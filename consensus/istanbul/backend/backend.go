@@ -297,6 +297,7 @@ func (sb *Backend) CheckSignature(data []byte, address common.Address, sig []byt
 	}
 	// Compare derived addresses
 	if signer != address {
+		sb.logger.Error("BFT CheckSignature: invalid", "address", address.Hex(), "signer", signer.Hex())
 		return istanbulcommon.ErrInvalidSignature
 	}
 

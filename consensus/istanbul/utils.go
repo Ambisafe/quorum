@@ -38,6 +38,7 @@ func GetSignatureAddress(data []byte, sig []byte) (common.Address, error) {
 	// 2. Recover public key
 	pubkey, err := crypto.SigToPub(hashData, sig)
 	if err != nil {
+		log.Error("istanbul.Utils GetSignatureAddress crypto.SigToPub(hashData, sig)", "err", err)
 		return common.Address{}, err
 	}
 	return crypto.PubkeyToAddress(*pubkey), nil
