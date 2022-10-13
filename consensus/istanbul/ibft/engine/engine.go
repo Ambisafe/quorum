@@ -16,6 +16,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/ethereum/go-ethereum/trie"
+	"github.com/ethereum/go-ethereum/log"
 	"golang.org/x/crypto/sha3"
 )
 
@@ -403,6 +404,12 @@ func (e *Engine) Signers(header *types.Header) ([]common.Address, error) {
 		// 2. Get the original address by seal and parent block hash
 		addr, err := istanbulcommon.GetSignatureAddress(proposalSeal, seal)
 		if err != nil {
+			zeroSeal, _ := hexutil.Decode("0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+			if bytes.Compare(seal, zeroSeal) == 0 {
+				// Old quorum consensus could produce zero committed seals. https://github.com/ConsenSys/quorum/pull/1118
+				log.Warn("Zero committed seal encountered", "block", header.Number)
+				continue
+			}
 			return nil, istanbulcommon.ErrInvalidSignature
 		}
 		addrs = append(addrs, addr)
