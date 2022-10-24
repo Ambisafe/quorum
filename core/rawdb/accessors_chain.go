@@ -571,12 +571,15 @@ func ReadReceiptsRLP(db ethdb.Reader, hash common.Hash, number uint64) rlp.RawVa
 		if common.BytesToHash(h) == hash {
 			return data
 		}
+		log.Warn("======== ReadReceiptsRLP hash didn't match", "block", number, "db", common.BytesToHash(h), "call", hash)
 	}
+	log.Warn("======== ReadReceiptsRLP db.Ancient(freezerReceiptTable, number) missing", "block", number, "call", hash)
 	// Then try to look up the data in leveldb.
 	data, _ = db.Get(blockReceiptsKey(number, hash))
 	if len(data) > 0 {
 		return data
 	}
+	log.Warn("======== ReadReceiptsRLP db.Get(blockReceiptsKey(number, hash)) missing", "block", number, "call", hash)
 	// In the background freezer is moving data from leveldb to flatten files.
 	// So during the first check for ancient db, the data is not yet in there,
 	// but when we reach into leveldb, the data was already moved. That would
@@ -587,7 +590,9 @@ func ReadReceiptsRLP(db ethdb.Reader, hash common.Hash, number uint64) rlp.RawVa
 		if common.BytesToHash(h) == hash {
 			return data
 		}
+		log.Warn("======== ReadReceiptsRLP hash didn't match concurrency", "block", number, "db", common.BytesToHash(h), "call", hash)
 	}
+	log.Warn("======== ReadReceiptsRLP missing", "block", number, "call", hash)
 	return nil // Can't find the data anywhere.
 }
 
